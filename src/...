@@ -1,0 +1,345 @@
+Twitter 
+
+# 1. setup
+    1. 설정.
+        - git & firebase 설정. /npm i firebase@9.6.1
+        - 파일 및 폴더 정리, 나머지 설정. 
+        - router-dom 설치/ npm i react-router-dom@5.3.0
+
+    2. Router.js
+        - Router, Switch 등을 기입하여 기초 뼈대 작성. 
+        - Router 작성 후 app.js 와 함깨 "/" 일 경우 홈으로 가도록, 또는 그 외의 경우 설정. 
+        - Router.js 에서 작성한 'const [isLoggedIn, setIsLoggenIn] = useState(false)' 을 app.js 로 이동. 
+        ㄴ app.js 로 옮긴 후 props로 전달. / => const AppRouter = ({isLoggedIn}) // <- router.js
+
+# 2. Authentication
+
+    1. Auth
+        - Authentication 모듈 사용을 위해 firebase파일에 import.
+        - jsconfig.json 파일을 만들어 
+            {
+                "compilerOptions": {
+                    "baseUrl": "src"
+                },
+                "include": ["src"]
+            }
+        ㄴ> 해당 내용 import 
+        - firebase 파일 내 
+            export const authService = firebase.auth() ;  
+        -> import, 
+        app.js 파일 내
+            import {authService} from "../firebase";
+        -> import. >> authservice를 많이 호출 할 예정이기 때문.
+
+    2. currentUser (현재 사용자)
+    * 유저 정보를 가져와 로그인 여부를 판단하도록 해야 함.
+    app.js - console.log(authService.currentUser) ; 
+            => 값은 'null'
+            => authService.currentUser를 useState에 값으로.
+            >> useState(authService.currentUser) // 이제 useState는 로그인 여부를 알 수 있게 됨. 
+
+    3. firebase 내 Authentication 설정.
+            - 로그인 유형 선택. / 깃허브, 구글, 이메일 컨택. 
+                            . 깃허브에 경우 oath apps 설정.  
+    Auth.js - <input type="email" placeholder="Email" required />
+            <input type="password" placeholder="Password" required />
+            <input type="submit" value="Log In" /> 
+            => 이메일 로그인을 위해 email, password input작성 및 submit 설정. 
+            - google, github 로그인 할 수 있는 버튼 생성. 
+            - 이메일 로그인 input활성화를 위해 '반응하는 form'을 만들어야 함. 
+            => email, password 각각 useState 설정. (기본 값은 (""))
+            => 각 input에 value값 설정. 
+            - onChange event 설정 및 console.log(event.target.name) 설정.
+            => 각 input에 name 값, onChange event 추가. 
+            - onSubnit event 설정. 
+            => form 제출에 대해 제한 하기 위해 preventDefault.
+            => form 에 onSubnit event 추가. 
+            - onChange event 에서 console 한 부분을 아래 코드로 바꿈.  
+            => const {target: {name, value}} = event ; 
+            => 로그인 조건문 작성. 
+
+    4. Creating Account 
+        * 회원가입 
+        - account 에 대한 useState 설정. -> 초기 값= false. 
+        - input submit의 value값을 변경. 
+            =>  value="Log In"
+            ㄴ> <input type="submit" value={newAccount ? "Create Account" : "Log In "} />
+                * newAccount라면 create account, 아니라면 log in
+                * useState 값을 true로 변경 시 회원가입. 그 반대라면 로그인. 
+        - submit 에 대한 form 제출 시 newAccount를 써서  확인. 
+            => newAccount가 참이라면 새 계정을 생성, 아니라면 로그인. 
+        - create User With Email And Password 은 promise 를 줌.
+            => await를 써야함을 의미. 
+            => await 사용 시 async 추가. 
+        - authservice를 import. 
+            if (newAccount) {
+                await authService.createUserWithEmailAndPassword(email, password)
+            } else { 
+                await authService.signInWithEmailAndPassword(email, password)
+            }
+            => 위 두 가지 모두 로그인 되게 할 것. 
+        - if 문을 try 문 안에 삽입. 
+        - catch(error) > error 확인 
+            => catch(error) {
+                console.log(error)}
+        - data를 봐야 하기 때문에 await 앞에 data 정의 후 추가, console.log(data) 추가. 
+    ! Log in 완료! 
+        - setPersistence = 사용자를 어떻게 기억할 것인지 선택. (local, session, none) 
+        > local 선택. / 새로고침을 해도 유저정보를 기억. (기본값)
+    
+    5. Log In 
+        - 로그인 되었지만 여전히 로그인 창이 보임. 
+            => firebase가 사용자가 로그인 되었는지 아닌지를 확인할 시간이 없기 떄문. 
+     app.js => 이를 확인 하기 위해 setInterval 사용. 
+                setInterval (() => {
+                    console.log(authService.currentUser)
+                }, 2000)
+                > 처음 null값을 확인하기 위해 isLoggedIn useState에도 console.log(authService.currentUser). 
+                => null값 확인: 처음 시작 할 때는 로그아웃 상태.
+                => 2초 후 로그인 정보 확인. 
+        - useState, isLoggedIn 수정. 
+            => init useState 추가, 초기값= false 
+            : 초기화되지 않은 상태, firebase가 프로그램을 초기화 하길 기다려야 함. 
+              초기화 다음, isLoggedIn으로 바뀌도록. >> useEffect 사용. 
+            - useEffect에서 user의 변화를 확인 해야 함. 
+            - onAuthStateChanged 사용 : 사용자의 로그인 상태의 변화를 관찰하는 관찰자를 추가.
+              > callback을 필요로 함, 그건 user가 됨.
+            => useEffect(() => {
+                authService.onAuthStateChanged((user) => console.log(user))
+               }, []) ;  
+               // 실제로 로그인이 되었는지, 안 되었는지를 확인 할 수 있음. 
+               // 왜냐하면 authService.currentUser에서는 실제로 로그인된 건지, 로그아웃한 건지 모르기 때문. 
+                >> isLoggedIn useState 값= false로 변경. 
+                >>   useEffect(() => {
+                        authService.onAuthStateChanged((user) => {
+                            if (user) {
+                                setIsLoggenIn(true) ; 
+                            } else {
+                                setIsLoggenIn(false) ; 
+                            } 
+                            setInint(true) ; >> init이 false라면 router를 숨길 것. 
+                            })
+                        }, []) ; 
+                >> {init ? <AppRouter isLoggedIn={isLoggedIn} /> : "Initializing..."}
+                => 초기화가 되었다면 router를 보여주고, 그게 아니라면 Initializing... 문구를 보여줌. 
+            ! 로그인 되어 Home 화면 확인. 
+
+    6. Error
+auth.js - catch(error)
+            console.log(error.message) 추가. 
+        - error useState 추가. 기본값= ("")
+        >> catch(error) {
+            setError(error.massage)}
+        >> input submit 하단에 {error} 추가. 
+    
+    7. toggleAccount 
+        * createAccount <-> login 
+        => const toggleAccount = () => setNewAccount((prev) => !prev) ; 
+          // 기본적으로 setNewAccount.
+          // setNewAccount의 이전 값을 가져와 그 값에 반대되는 것을 return. 
+        => <span onClick={toggleAccount}>{newAccount ? "Log In" : "Create Account"}</span>
+          // onClick event = toggleAccount.
+          // newAccount 참이면 로그인, newAccount 거짓이면 회원가입. 
+    
+    8. Social log in
+        *pop-up : provider을 만들고, provider로 로그인 해야 함. 
+        - 각 버튼에 name 추가. 
+        - onSocialClick event 추가. 각 button에 event 추가. 
+        - (console.log(event.target.name) 로 확인.) => const {target: {name}} = event ; / 변경. 
+f.b.js  - provider 사용을 위해 firebase.js에 firebaseInstance import. 
+Auth.js - let provider 추가. 
+        - if 문 추가. 
+        => let provider ; 
+            if(name === "google") {
+                provider = new firebaseInstance.auth.GoogleAuthProvider() ; 
+            } else if (name === "github") {
+                provider = new firebaseInstance.auth.GithubAuthProvider() ; 
+            } 
+            const data = await authService.signInWithPopup(provider) ; 
+        ! google, github 로그인 완료. 
+    
+    9. Navigation 
+        - 파일 생성. 
+Rout.js - {isLoggedIn && <Navigation />} 추가. // && = Navigation이 존재하려면 그건 true여야 한다는 것을 의미.
+Navi.js - home, profile로 가는 링크 설정. 
+Rout.js - profile route 설정. 
+
+    10. Log Out 
+prof.js - log out button 추가. 
+        - Authentication부분을 끝내기 위해 authservice가 필요. 
+        - onClick event 추가.
+          >> const onLogOutClick = () => authService.signOut() ; 
+        => button에 event 추가. 
+    ! 로그아웃은 했으나 url이 home으로 변경되지 않음. 
+        - useHistory 사용. 
+    !! rect, react-router-dom 호환성 문제로 url이 새로고침 시에 변경됨.
+     >> index.js 내의 
+        <React.StrictMode>
+            <App />
+        </React.StrictMode>
+        부분을 
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+        로 변경. 
+    
+# 3. Nweeting 
+    1. seting
+Home.js - tweet input, butthon(submit) 작성. 
+        - onSubmit event > form 설정. 
+        - onChange event > tweet form 설정 >> input에 설정.  
+            => tweet useState 설정. 
+            => input value 설정. 
+        - firebase database 설정. 
+         * 지역: asia-northeast3 Seoul
+    
+    2. tweeting 
+firb.js - import, export 설정. 
+          import "firebase/compat/firestore";
+          export const dbService = firebase.firestore() ; 
+Home.js - Collection Reference <- Collection에는 collectionPath(경로)라는 게 필요.
+        - onSubmit event에 Collection 추가. // path(경로) = tweets
+        * add 사용. >> add = data. 
+            => 즉, 명시된 데이터를 담은 새로운 document를 Collection에 추가 하는 것. 
+            => document ID를 자동으로 부여. 
+            => add 에는 어떤 데이터든 원하는 것을 넣을 수 있음. 
+        - add에 tweet, createdAt 추가. 
+            => tweet = document의 key가 될 것. 
+            => Collection인 tweets는 tweet이라는 걸 가짐 >> state에 있는 tweet과 같음. 
+    ! submit 후, 'setTweet("")'
+    ! firebase database에 tweet 추가 성공. 
+        - add가 promis를 return하기 때문에 async, await 추가. 
+
+    3. getting the tweets 
+        - tweets useState 설정. 기본값: ([]) ; 
+        - component가 mount 되면 useEffect 사용. >> useEffect 설정. 
+            * mount : 디스크와 같은 물리적 장치를 특정 위치 즉, 디렉토리에 연결시켜 주는 것. 
+            => useEffect(() => {
+                dbService.collection("tweets").get()}, []) ; 
+            => 하지만 async를 써야함으로 개별적 함수로 만들어야 함. 
+            => getTweets 함수 설정. (+ async)
+            => useEffect에 getTweets 호출.
+            >> const getTweets = async () => {
+                    const dbtweets = await dbService.collection("tweets").get() ;
+                    console.log(dbtweets)}
+                useEffect(() => {
+                    getTweets()}, []) ; 
+            - get 은 querySnapshot을 return.
+            - forEach 추가. 
+                * forEach: 배열을 순회하면서 인자로 전달한 함수를 호출하는 반복문.
+                >> 함수로 value, index, array를 전달.
+                >> value : 현재 순회 중인 요소
+                    index : 현재 순회 중인 요소의 index
+                    array : 배열 객체
+                >> map() 과 비슷하나, 따로 return하는 값이 없음. 
+            => const getTweets = async () => {
+                    const dbtweets = await dbService.collection("tweets").get() ;
+                    dbtweets.forEach((document) => console.log(document.data()))}
+            - dbtweets 안에 있는 모든 document에 대해 setTweets함수 사용. 
+                => 배열을 return하며, 그 첫번째 요소는 가장 최근의 document이고, 그 뒤로 이전 document를 붙임. 
+                => dbtweets.forEach((document) => {
+                    setTweets((prev) => [document.data(), ...prev]) })
+    4. show tweet
+        - 더 나은 객체를 보여주기 위해 tweet의 객체 생성. 
+            >> document.data() 와 document.id 에서 id를 가져올 것. 
+            => dbtweets.forEach((document) => {
+                    const tweetObj = {
+                        ...document.data(),  
+                        id: document.id, } ; 
+                    setTweets((prev) => [tweetObj, ...prev]) ;  
+            ** ...document.data() : 데이터를 가져와 풀어내는 것. 
+                >> ... : 데이터의 내용물. 
+        - div 추가 후 그 안에 map 추가. 
+            >> map key = id // 모든 tweet에 id를 할당했기 때문. 
+    ! show tweet complet. 
+    
+    5. user ID 
+App.js  - userObj useState 설정. 기본값: (null) ;
+        - 우리가 받을 user에 setUserObj 삽입. 
+            >> if 조건문. 
+        - AppRouter에 userObj 삽입. 
+Roter.js    >> const AppRouter 에 userObj 전달.  
+            >> <Home /> props 전달. 
+Home.js     >> const Home에 userObj props 전달.
+    ! =>> 이제 누가 로그인 했는지 알 수 있음.
+            >> console.log(userObj) 로 확인 가능.
+        - onSubmit 에 creatorId: userObj.uid 설정.
+
+    5. realtime 
+        * onSnapshot : 기본적으로 데이터베이스의 변화를 실시간으로 알려줌. 
+        - useEffect 에 onSnapshot 추가.
+    ! tweet 받는 방법 변경: 오래된 방식 -> 새로운 방식.
+변경 전  => const getTweets = async () => {
+            const dbtweets = await dbService.collection("tweets").get() ;
+            dbtweets.forEach((document) => {
+                const tweetObj = {
+                    ...document.data(),  
+                    id: document.id,
+                } ; 
+                setTweets((prev) => [tweetObj, ...prev]) ;             
+            })
+변경 후  =>     useEffect(() => {
+                    dbService.collection("tweets").onSnapshot(snapshot => {
+                        const tweetArray = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}))
+                        // 모든 doc는 objects를 반환, 
+                        setTweets(tweetArray) }) }, []) ;
+
+    6.Delete and Update 
+        - Tweet.js 파일 생성.
+        - Home 에 있는 map에 있는 h4를 가져와 Tweet파일에 붙여 넣고 Home 파일에 Tweet import.
+Twee.js - button 생성.
+Home.js - <Tweet /> 에 isOwner={tweet.creatorId === userObj.uid} 설정.
+        >> isOwner은 true or false 값을 가질 것. 
+      ? >> 트윗을 쓴 사람의 아이디가 userObj의 Id와 매치할 때 = isOwner
+Twee.js - isOwner props 전달. 
+        - isOwner 일 때만 각 버튼이 노출 되도록. 
+Delete  - onDeleteClick event 설정.
+        - if 문 작성 // 현재 userId를 알고 있음.   
+    ! Delete complet 
+Edit    - Edit useState 설정. 기본값: (false) ; 
+        - newEdit useState 설정. 기본값: (tweetObj.text) ; 
+        - toggleEditing event 설정. 
+        - Edit 이면 form을 보여주고, 그게 아니라면 h4 를 보여줌. 
+        - input form 하단에 cancle button 추가. 
+        - 버튼에 toggleEditing event 추가. 
+        - input 에 value, type 추가. 
+        - onChange 설정, input에 추가. 
+        - onSubmit 설정, form에 추가. 
+        - onChange event에 setNewEdit(value) 추가.
+        - submit input 생성. 
+        - submit event에 dbService.doc 작성. 
+            >> dbService.doc(`tweets/${tweetObj.id}`).update({
+                    text: newEdit,
+# 4. File upload
+    1. preview Image part one 
+Home.js - file input 추가. 
+        - onChange event 추가. 
+        >> const theFile = files[0] ; 
+           const reader = new FileReader() ;
+           // file 로 reader을 만들고 
+           reader.readAsDataURL(theFile) ; 
+           // readAsDataURL로 파일을 읽음. 
+        >> 이벤트 리스너 추가. 
+        >> file useState 추가. 
+        => const onFileChange = (event) => {
+            const {target: {files}} = event ; 
+            const theFile = files[0] ; 
+            const reader = new FileReader() ;
+            reader.onloadend = (finishedEvent) => {
+            const {currentTarget: {result}} = finishedEvent ;
+            setFile(result) ; 
+            }
+            reader.readAsDataURL(theFile) ; }
+        - <form> 에 img input 추가. 
+        - onClick event 추가. 
+        - 
+
+
+        
+
+
+
+
+
+
+    
