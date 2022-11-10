@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/nwitter/static/css/main.bb96e9f9.css",
+    "main.js": "/nwitter/static/js/main.15c71975.js",
+    "static/media/delete.png": "/nwitter/static/media/delete.ca29181e9c26aececf77.png",
+    "static/media/google-logo.png": "/nwitter/static/media/google-logo.b880b8c61ac426ebe841.png",
+    "index.html": "/nwitter/index.html",
+    "main.bb96e9f9.css.map": "/nwitter/static/css/main.bb96e9f9.css.map",
+    "main.15c71975.js.map": "/nwitter/static/js/main.15c71975.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bb96e9f9.css",
+    "static/js/main.15c71975.js"
+  ]
+}
