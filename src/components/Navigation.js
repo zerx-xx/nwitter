@@ -21,7 +21,7 @@ const Navigation = ({userObj}) => {
                 </ul>
             </nav>
         </div>
-    )
+    ) 
 }
 
 export default Navigation ; 
