@@ -1,8 +1,10 @@
 import React from "react";
 import { HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import Account from "../routes/Account";
 import Auth from "../routes/Auth";
 import Home from "../routes/Home";
 import Profile from "../routes/Profile";
+import AuthForm from "./AuthForm";
 import Navigation from "./Navigation";
 
 const AppRouter = ({refreshUser, isLoggedIn, userObj}) => {
@@ -19,13 +21,21 @@ const AppRouter = ({refreshUser, isLoggedIn, userObj}) => {
                 <Route exact path="/profile">
                     <Profile userObj={userObj} refreshUser={refreshUser} />
                 </Route>
+
+
                 <Redirect from="*" to="/" />
 
                 </> : <>
 
                 <Route exact path="/">
-                    <Auth />
+                    <Account />
                 </Route>
+                <Redirect from="*" to="/" />
+
+                <Route exact path="/authform">
+                    <AuthForm userObj={userObj} />
+                </Route>
+
                 <Redirect from="*" to="/" />
 
                 </>}

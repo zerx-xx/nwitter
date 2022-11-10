@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { dbService, storageService } from "../firebase";
+import Modal from "./modal";
+import "/Users/drizzle/nwitter/src/css/nweet.modul.css" ;
+import deletelogo from "/Users/drizzle/nwitter/src/imag/delete.png" ; 
+import pencilelofo from "/Users/drizzle/nwitter/src/imag/pencile.png" ;
 
 const Nweet = ({nweetObj, isOwner, attachmentUrl}) => {
     const [editing, setEditing] = useState(false) ; 
@@ -28,35 +32,50 @@ const Nweet = ({nweetObj, isOwner, attachmentUrl}) => {
         setNewNweet(value) ; 
     } ;
 
+
     return (
-        <div>
-            {editing ? (
-            <>
-            <form onSubmit={onSubmit}>
-                <input type="text" 
-                       placeholder="Edit your nweet."
-                       value={newNweet}
-                       onChange={onChange} 
-                       required />
-                <input type="submit" 
-                       value="Update Nweet" /> 
-            </form> 
-            <button onClick={toggleEditing}> Cancle </button>
-            </>
-            ) : (
-            <>
-                <h4> {nweetObj.text} </h4>
-                {nweetObj.attachmentUrl && (
-                    <img src={nweetObj.attachmentUrl} width="100px" height="100px"/>
-                )}
-                {isOwner && (
+        <div className="allEdit">
+        <div className="DivDiv">
+            <div className="nweetDiv">
+                {editing ? (
                 <>
-                    <button onClick={onDeleteClick}> Delete Nweet </button>
-                    <button onClick={toggleEditing}> Update Nweet </button>
+                <form className="editFrom" onSubmit={onSubmit}>
+                    <textarea type="text" 
+                        placeholder="Edit your nweet."
+                        value={newNweet}
+                        onChange={onChange} 
+                        required 
+                        className="editInput"/>
+                    <input className="editButton"
+                        type="submit" 
+                        value="Update" /> 
+                    <button className="buttonCancle" onClick={toggleEditing}> Cancle </button>
+                </form> 
+                </>
+                ) : (
+                <>
+                    <div className="nweetDiv">
+                        <form className="nweetForm">
+                            <h4> {nweetObj.text} </h4>
+                            {nweetObj.attachmentUrl && (
+                                <img src={nweetObj.attachmentUrl} width="100px" height="100px"/>
+                            )}
+                        </form>
+                        {isOwner && (
+                        <>
+                            <form className="buttonForm">
+                                <button className="buttonDelete" onClick={onDeleteClick}> 
+                                    <img src={deletelogo} width="15" height="18" /></button>
+                                <button className="buttonEdit" onClick={toggleEditing}> 
+                                    <img src={pencilelofo} width="18" height="18" /></button>
+                            </form>
+                        </>
+                        )}
+                    </div>
                 </>
                 )}
-            </>
-            )}
+            </div>
+        </div>
         </div>
     )
 } ;

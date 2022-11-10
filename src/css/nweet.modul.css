@@ -1,0 +1,126 @@
+.buttonForm {
+    /* background-color: aqua; */
+    margin: 0 0 0 0;
+    text-align: right;
+    width: 50px;
+    margin-left: 360px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.buttonDelete,
+.buttonEdit {
+    background-color:transparent;
+    border: 0;
+    outline: 0;
+    margin-bottom: 0px;
+}
+
+.buttonDelete{
+    margin-right: 12px;
+}
+
+.buttonCancle,
+.editButton {
+    display: inline-block; 
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0) ;
+    border: none;
+    font-size: 10px;
+    padding: 10px;
+    border-radius: 100px;
+    outline: none;
+    box-shadow: 6px 10px 18px rgba(170, 184, 194, 0.25);
+    font-style:normal;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 3px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    width: 60px;
+}
+.buttonCancle{
+    margin-right: 95px;
+    margin-bottom: 5px;
+    /* margin-top: 10px; */
+}
+.editButton {
+    margin-right: 5px;
+}
+
+.editInput {
+    display: inline-block; 
+    background-color: rgb(245, 248, 250);
+    color: rgb(0, 0, 0) ;
+    border: none;
+    font-size: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    outline: none;
+    box-shadow: 6px 10px 18px rgba(170, 184, 194, 0.25);
+    font-style:normal;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+    width: 413px;
+    height: 130px;
+
+    left: -100px;
+    /* top: px; */
+
+    position: relative;
+
+}
+
+.editFrom{
+    text-align: right;
+    margin-right: 10px;
+    position: relative;
+
+    right: 23.5%;
+    left: 23.5%;
+}
+
+.nweetForm {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    height: auto;
+    top: 160px;
+    height: auto ; 
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    color: rgb(0, 0, 0) ;
+    border: none;
+    font-size: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    outline: none;
+    text-align:start;
+    margin-left: 5px;
+    margin-top: 3px;
+    width: 410px;
+}
+
+.DivDiv{
+    text-align: end;
+    margin-left: 55px;
+    margin-top: 1.5%;
+}
+
+.nweetDiv{ 
+    display: inline-block;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    width: 420px;
+}
+
+.allEdit {
+    display: inline-block;
+    /* background-color: blue; */
+}
+

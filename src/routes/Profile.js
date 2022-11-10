@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { authService, dbService } from "../firebase";
+import "/Users/drizzle/nwitter/src/css/reset.css"
+import "/Users/drizzle/nwitter/src/css/profile.modul.css"
 
-const Profile = ({refreshUser, userObj}) => {
+const ProfileEdit = ({refreshUser, userObj}) => {
     const [newDisplayName, setNewDisplayName] = useState(userObj.displayName) ; 
 
     const onChange = (event) => {
@@ -21,7 +23,6 @@ const Profile = ({refreshUser, userObj}) => {
      
     const onLogOutClick = () => {
         authService.signOut() ;
-        refreshUser() ; 
     } ; 
 
     const getMyNweet = async() => {
@@ -40,17 +41,24 @@ const Profile = ({refreshUser, userObj}) => {
 
     return(
         <>
-        <form onSubmit={onSubmit}>
-            <input type="text"
-                   placeholder="Display name"
-                   value={newDisplayName} 
-                   onChange={onChange}/>
-            <input type="submit" 
-                   value="Update Profile" />
-        </form>
-            <button onClick={onLogOutClick}> Log Out </button>
+        <div className="displayDiv">
+            <form className="displayForm"
+                  onSubmit={onSubmit}>
+                <h1 className="profileH1"> {userObj.displayName}'s Profile </h1>
+                <input type="submit" 
+                       value="Update Profile" 
+                       className="updateButton"/>
+                <button className="logOutButton"
+                        onClick={onLogOutClick}> Log Out </button>
+                <input type="text"
+                        placeholder="Display name"
+                        value={newDisplayName} 
+                        onChange={onChange}
+                        className="displayInput"/>
+            </form>
+        </div>
         </>
     )
 }
 
-export default Profile ; 
+export default ProfileEdit ; 

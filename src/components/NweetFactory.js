@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { dbService, storageService } from "../firebase";
 import {v4 as uuidv4} from "uuid" ; 
+import "/Users/drizzle/nwitter/src/css/nweetfactory.modul.css"
+import "/Users/drizzle/nwitter/src/css/reset.css"
+import photologo from "/Users/drizzle/nwitter/src/imag/photo.png"
+import cancile from "/Users/drizzle/nwitter/src/imag/cancile.png" 
 
 
 const NweetFactory = ({userObj}) => {
@@ -9,6 +13,9 @@ const NweetFactory = ({userObj}) => {
 
     const onSubmit = async (event) => {
         event.preventDefault() ; 
+        // if (nweet === "") {
+        //     return;
+        // }
         let attachmentUrl = "" ; 
         if(attachment !== "") {
             const attachmentRef = storageService
@@ -27,6 +34,7 @@ const NweetFactory = ({userObj}) => {
         setNweet("") ; 
         setAttachment("") ; 
     } ; 
+
     const onChange = (event) => {
         const {target: {value}} = event ; 
         setNweet(value) ; 
@@ -40,29 +48,53 @@ const NweetFactory = ({userObj}) => {
             const {currentTarget: {result}} = finishedEvent ; 
             setAttachment(result) ; 
         } ;
+        if (Boolean(theFile)) {
         reader.readAsDataURL(theFile) ; 
+        }
     } ; 
 
     const onClearAttachmentClick = () => setAttachment(null) ; 
 
+    
     return (
-        <form onSubmit={onSubmit}>
-            <input type="text" 
-                    placeholder="What's on your mind?"
-                    maxLength={600} 
-                    value={nweet}
-                    onChange={onChange} />
-            <input type="file"
-                    accept="image/*" 
-                    onChange={onFileChange}/>
-            <input type="submit"
-                    value="Nweet" />
-            {attachment && 
+        <div className="writeDiv">
+            <form className="writeForm" 
+                    onSubmit={onSubmit}>
                 <div>
-                    <img src={attachment} width="100px" height="100px" />
-                    <button onClick={onClearAttachmentClick}> Cancle </button>     
-                </div>}
-        </form>
+                    <textarea className="writeInput" 
+                            type="text" 
+                            placeholder="What's on your mind?"
+                            maxLength={600} 
+                            value={nweet}
+                            onChange={onChange} />
+                        
+                </div>
+                    <input
+                        id="attach-file"
+                        type="file"
+                        accept="image/*"
+                        onChange={onFileChange}
+                        style={{
+                        opacity: 0,
+                        }}
+                    />
+                    <div className="divFile">
+                        <label for="attach-file" className="factoryInput__label">
+                                <img className="imgFile" src={photologo} width="30" height="29" />
+                            <input className="writeButton" 
+                                    type="submit"
+                                    value="Nweet" /> 
+                        </label>
+                    </div>
+                {attachment && 
+                    <div className="cancleButton" >
+                        <img className="attachmentFileImge" src={attachment} width="auto" height="100px" />
+                        <div className="factoryForm__clear" onClick={onClearAttachmentClick}>
+                        <img className="cancileButton" src={cancile} width="10px" height="10px"/>
+                        </div> 
+                    </div>}
+            </form>
+        </div>
     )
 }
 

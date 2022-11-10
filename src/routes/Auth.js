@@ -1,6 +1,8 @@
 import React from "react";
-import AuthForm from "../components/AuthForm";
 import { authService, firebaseInstance } from "../firebase";
+import googlelogo from "../imag/google-logo.png" ;
+import "/Users/drizzle/nwitter/src/css/account.modul.css"
+
 
 const Auth = () => {
     const onSocialClick = async (event) => {
@@ -14,10 +16,7 @@ const Auth = () => {
 
     return (
         <div>
-            <AuthForm />
-            <div>
-                <button onClick={onSocialClick} name="google"> Confinue with Google </button>
-            </div>
+            <button className="googlebutton" onClick={onSocialClick} name="google" > <img className="googlelogo" src={googlelogo} width="16" height="16"  /> Continue with Google </button>
         </div>
     )
 }
